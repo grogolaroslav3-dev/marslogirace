@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Марс 2047 | Арес-1 Колонія & Арес-7 База</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Starfield Canvas -->
+<canvas id="starfield"></canvas>
+<!-- Scan Lines -->
+<div id="scanlines"></div>
+
+<!-- Easter egg popups -->
+<div id="secret-msg">📡 СИГНАЛ ПРИЙНЯТО // РІВЕНЬ ДОСТУПУ: АЛЬФА</div>
+<div class="secret-found" id="secret-notif">
+  <div class="sf-title">🔍 СЕКРЕТ ЗНАЙДЕНО!</div>
+  <div class="sf-count" id="secret-count">0 / 5 секретів</div>
+</div>
+
+<!-- Progress toast -->
+<div id="progress-toast"></div>
+
+<!-- Konami overlay -->
+<div id="konami-overlay">
+  <div>
+    <div style="font-size:4rem;margin-bottom:1rem;">🚀</div>
+    <h2>КОД АКТИВОВАНО</h2>
+    <p>⬆⬆⬇⬇⬅➡⬅➡ B A<br><br>Ти знайшов секрет командира.<br>«Марс чекає тих, хто не боїться мріяти.»</p>
+    <p style="color: var(--gold); font-size:0.8rem; margin-top:1rem;">— Командир Лейла Атаєва</p>
+    <br>
+    <button onclick="closeKonami()">ЗАКРИТИ // ESC</button>
+  </div>
+</div>
+
+<!-- Terminal -->
+<div id="terminal">
+  <div class="terminal-header">
+    <span>ARES-1 // SECURE TERMINAL v2.4</span>
+    <span class="terminal-close" onclick="closeTerminal()">[ X ]</span>
+  </div>
+  <div id="terminal-body">ARES-1 TERMINAL ONLINE...
+Дата: Sol 847, 14:22 МСЧ
+Статус: АКТИВНИЙ
+
+Введи "help" для списку команд.
+> </div>
+  <div class="terminal-input-row">
+    <span class="terminal-prompt">&gt;</span>
+    <input type="text" id="terminal-input" placeholder="команда..." autocomplete="off">
+  </div>
+</div>
+
+<!-- Mode Switcher -->
+<div id="mode-switcher">
+  <button class="mode-btn active" id="btn-landing" onclick="switchMode('landing')">🌍 АРЕС-1</button>
+  <button class="mode-btn" id="btn-hud" onclick="switchMode('hud')">⬡ АРЕС-7 HUD</button>
+</div>
+
+<!-- ========== LANDING VIEW ========== -->
+<div id="view-landing">
+
+  <!-- Navigation -->
+  <nav id="main-nav">
+    <div class="nav-logo secret-trigger" id="logo-secret" title="">АРЕС<span>-1</span></div>
+    <ul class="nav-links" id="nav-links-list">
+      <li><a href="#mission">Місія</a></li>
+      <li><a href="#base">База</a></li>
+      <li><a href="#team">Команда</a></li>
+      <li><a href="#gallery">Галерея</a></li>
+      <li><a href="#facts">Факти</a></li>
+      <li><a href="#author">Автор</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:1rem;">
+      <div class="nav-status">
+        <div class="status-dot"></div>
+        <span>ONLINE // SOL 847</span>
+      </div>
+      <div class="nav-hamburger" id="nav-hamburger" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- SECTION 1: МІСІЯ -->
+  <section id="mission">
+    <div class="mars-sky"></div>
+    <div class="mars-planet-bg secret-trigger" id="planet-secret"></div>
+    <div class="mars-horizon"></div>
+    <div class="mars-surface"></div>
+    <!-- Dust particles -->
+    <div class="dust-container" id="dust-container"></div>
+    <span class="secret-star" style="top:20%;left:10%;animation-delay:0.5s">✦</span>
+    <span class="secret-star" style="top:40%;left:5%;animation-delay:1.2s">✦</span>
+    <span class="secret-star" style="top:15%;right:25%;animation-delay:2s">✦</span>
+
+    <div class="hero-content">
+      <div class="mission-badge">🔴 Місія Арес-1 // 2047</div>
+      <h1 class="hero-title">
+        <span class="line1">КОЛОНІЯ <span class="accent">МАРС</span></span>
+        <span class="line2">Новий Дім Людства</span>
+      </h1>
+      <p class="hero-subtitle">
+        Ти стаєш архітектором майбутнього — тут, де червоний пил зустрічає зірки,
+        а людська воля будує перший форпост на іншій планеті.
+      </p>
+      <div class="hero-cta">
+        <a href="#base" class="btn-primary">Досліджуй Базу</a>
+        <a href="#facts" class="btn-secondary">Факти Місії</a>
+        <button class="btn-hud" onclick="switchMode('hud')">⬡ Відкрити HUD Арес-7</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-val" id="stat-sols">847</span>
+          <div class="hero-stat-label">Солів онлайн</div>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-val">156</span>
+          <div class="hero-stat-label">Колоністів</div>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-val">3</span>
+          <div class="hero-stat-label">Куполи</div>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-val">2</span>
+          <div class="hero-stat-label">Бази</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <span>Прокрути</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: БАЗА -->
+  <section id="base">
+    <div class="section-header reveal">
+      <div class="section-tag">База // Arsia Mons Station</div>
+      <h2 class="section-title">Наш <span class="highlight">Форпост</span></h2>
+      <div class="section-divider"></div>
+    </div>
+
+    <div class="base-grid">
+      <div class="base-visual reveal">
+        <div class="colony-svg-wrap">
+          <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="skyGrad" cx="50%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#1a0d08"/>
+                <stop offset="100%" stop-color="#050200"/>
+              </radialGradient>
+              <radialGradient id="groundGrad" cx="50%" cy="0%" r="100%">
+                <stop offset="0%" stop-color="#3a1505"/>
+                <stop offset="100%" stop-color="#1a0800"/>
+              </radialGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <radialGradient id="domeGrad" cx="40%" cy="30%" r="60%">
+                <stop offset="0%" stop-color="rgba(74,158,186,0.2)"/>
+                <stop offset="100%" stop-color="rgba(74,158,186,0.05)"/>
+              </radialGradient>
+            </defs>
+            <rect width="600" height="400" fill="url(#skyGrad)"/>
+            <!-- stars -->
+            <circle cx="80" cy="30" r="1" fill="white" opacity="0.6"/>
+            <circle cx="150" cy="60" r="1.5" fill="white" opacity="0.4"/>
+            <circle cx="300" cy="20" r="1" fill="white" opacity="0.8"/>
+            <circle cx="450" cy="45" r="1" fill="white" opacity="0.5"/>
+            <circle cx="520" cy="80" r="1.5" fill="white" opacity="0.3"/>
+            <circle cx="40" cy="80" r="1" fill="white" opacity="0.7"/>
+            <circle cx="200" cy="40" r="0.8" fill="white" opacity="0.9"/>
+            <circle cx="380" cy="30" r="1" fill="white" opacity="0.6"/>
+            <circle cx="560" cy="20" r="1.2" fill="white" opacity="0.4"/>
+            <circle cx="100" cy="120" r="0.8" fill="white" opacity="0.5"/>
+            <!-- horizon -->
+            <polygon points="0,250 80,180 160,240 220,190 300,220 380,175 450,200 530,165 600,190 600,280 0,280" fill="#1a0800" opacity="0.8"/>
+            <rect x="0" y="270" width="600" height="130" fill="url(#groundGrad)"/>
+            <line x1="0" y1="290" x2="600" y2="285" stroke="#2a1005" stroke-width="1" opacity="0.5"/>
+            <line x1="0" y1="310" x2="600" y2="315" stroke="#2a1005" stroke-width="1" opacity="0.3"/>
+            <!-- Main dome -->
+            <ellipse cx="220" cy="270" rx="100" ry="10" fill="#1a0800" opacity="0.5"/>
+            <path d="M120,270 Q120,180 220,180 Q320,180 320,270 Z" fill="url(#domeGrad)" stroke="rgba(74,158,186,0.4)" stroke-width="1.5"/>
+            <path d="M170,270 Q170,200 220,190 Q220,200 220,270 Z" fill="none" stroke="rgba(74,158,186,0.15)" stroke-width="1"/>
+            <path d="M270,270 Q270,200 220,190 Q220,200 220,270 Z" fill="none" stroke="rgba(74,158,186,0.15)" stroke-width="1"/>
+            <path d="M140,240 Q180,195 220,190 Q260,195 300,240" fill="none" stroke="rgba(74,158,186,0.15)" stroke-width="1"/>
+            <path d="M130,258 Q175,200 220,195 Q265,200 310,258" fill="none" stroke="rgba(74,158,186,0.15)" stroke-width="1"/>
+            <path d="M120,270 Q120,180 220,180 Q320,180 320,270 Z" fill="none" stroke="rgba(74,158,186,0.6)" stroke-width="1" filter="url(#glow)"/>
+            <!-- Lab dome -->
+            <ellipse cx="430" cy="270" rx="65" ry="7" fill="#1a0800" opacity="0.5"/>
+            <path d="M365,270 Q365,215 430,215 Q495,215 495,270 Z" fill="url(#domeGrad)" stroke="rgba(74,158,186,0.35)" stroke-width="1.2"/>
+            <path d="M365,270 Q365,215 430,215 Q495,215 495,270 Z" fill="none" stroke="rgba(74,158,186,0.5)" stroke-width="0.8" filter="url(#glow)"/>
+            <!-- Tunnel -->
+            <rect x="318" y="255" width="50" height="18" rx="9" fill="rgba(30,15,5,0.9)" stroke="rgba(74,158,186,0.3)" stroke-width="1"/>
+            <!-- Solar panels left -->
+            <line x1="60" y1="270" x2="60" y2="240" stroke="#c1440e" stroke-width="2"/>
+            <rect x="20" y="238" width="80" height="5" rx="2" fill="#c1440e" opacity="0.8"/>
+            <rect x="20" y="245" width="80" height="5" rx="2" fill="#c1440e" opacity="0.6"/>
+            <rect x="20" y="238" width="80" height="10" rx="2" fill="none" stroke="#e8611a" stroke-width="0.5" opacity="0.5" filter="url(#glow)"/>
+            <!-- Solar panels right -->
+            <line x1="540" y1="270" x2="540" y2="240" stroke="#c1440e" stroke-width="2"/>
+            <rect x="505" y="238" width="70" height="5" rx="2" fill="#c1440e" opacity="0.8"/>
+            <rect x="505" y="245" width="70" height="5" rx="2" fill="#c1440e" opacity="0.6"/>
+            <!-- Antenna -->
+            <line x1="220" y1="180" x2="220" y2="140" stroke="#888" stroke-width="1.5"/>
+            <circle cx="220" cy="138" r="4" fill="none" stroke="rgba(0,229,255,0.7)" stroke-width="1.5" filter="url(#glow)"/>
+            <circle cx="220" cy="138" r="2" fill="rgba(0,229,255,0.5)"/>
+            <circle cx="220" cy="138" r="10" fill="none" stroke="rgba(0,229,255,0.3)" stroke-width="1">
+              <animate attributeName="r" values="4;20" dur="2s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.5;0" dur="2s" repeatCount="indefinite"/>
+            </circle>
+            <!-- Rover -->
+            <rect x="355" y="262" width="30" height="14" rx="2" fill="#4a3520" stroke="#7a5530" stroke-width="1"/>
+            <circle cx="360" cy="277" r="5" fill="#222" stroke="#555" stroke-width="1"/>
+            <circle cx="380" cy="277" r="5" fill="#222" stroke="#555" stroke-width="1"/>
+            <line x1="355" y1="262" x2="360" y2="255" stroke="#888" stroke-width="1"/>
+            <rect x="359" y="252" width="8" height="6" rx="1" fill="#555"/>
+            <!-- Window lights -->
+            <circle cx="200" cy="245" r="4" fill="rgba(245,200,66,0.3)" filter="url(#glow)"/>
+            <circle cx="235" cy="235" r="3" fill="rgba(245,200,66,0.25)" filter="url(#glow)"/>
+            <circle cx="255" cy="248" r="3.5" fill="rgba(245,200,66,0.3)" filter="url(#glow)"/>
+            <!-- Labels -->
+            <text x="220" y="315" text-anchor="middle" font-family="monospace" font-size="9" fill="rgba(200,120,60,0.7)" letter-spacing="3">ARES-1 MAIN BASE</text>
+            <text x="430" y="315" text-anchor="middle" font-family="monospace" font-size="8" fill="rgba(200,120,60,0.5)" letter-spacing="2">LAB DOME</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="base-info reveal">
+        <p class="base-desc">
+          Колонія <strong>Арес-1</strong> розташована біля вулкана <strong>Арсія Монс</strong> —
+          стратегічна точка на Марсі з геотермальними ресурсами та захистом від космічного
+          випромінювання. Три куполи з'єднані тунелями, де підтримується атмосфера Землі.
+        </p>
+        <div class="base-stat-grid">
+          <div class="stat-card"><span class="stat-value">156</span><div class="stat-label">Колоністів</div></div>
+          <div class="stat-card"><span class="stat-value">3</span><div class="stat-label">Куполи</div></div>
+          <div class="stat-card"><span class="stat-value">847</span><div class="stat-label">Солів онлайн</div></div>
+          <div class="stat-card secret-trigger" id="stats-secret" style="position:relative;">
+            <span class="stat-value" style="font-size:1.5rem">−63°C</span>
+            <div class="stat-label">Температура зовні</div>
+            <div class="morse-tooltip">.... .. -.. -.. . -.  ..-. .. .-.. .</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: КОМАНДА -->
+  <section id="team">
+    <div class="section-header reveal">
+      <div class="section-tag">Команда // Crew Alpha-7</div>
+      <h2 class="section-title"><span class="highlight">Герої</span> Місії</h2>
+      <div class="section-divider"></div>
+      <p style="color:var(--text-dim); font-size:0.85rem; max-width:500px; margin:0 auto;">
+        Шестеро сміливців, що пишуть нову главу людської цивілізації на червоній планеті.
+      </p>
+    </div>
+    <div class="team-grid">
+      <div class="team-card reveal secret-trigger" id="crew1">
+        <div class="team-secret-badge" id="crew1-badge"></div>
+        <div class="team-avatar">👩‍🚀</div>
+        <div class="team-name">Лейла Атаєва</div>
+        <div class="team-role">Командир</div>
+        <p class="team-bio">Колишній пілот МКС. Перша людина, яка провела понад 1000 солів на Марсі. Любить шахи та астрофізику.</p>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar">🧑‍🔬</div>
+        <div class="team-name">Дмитро Коваль</div>
+        <div class="team-role">Геолог</div>
+        <p class="team-bio">Дослідник марсіанських порід. Відкрив поклади водяного льоду в кратері Елізій. Захоплюється мінералами.</p>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar">👩‍⚕️</div>
+        <div class="team-name">Сара Оконкво</div>
+        <div class="team-role">Лікар</div>
+        <p class="team-bio">Фахівець з космічної медицини. Розробила протокол адаптації до пониженої гравітації для всього екіпажу.</p>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar">🧑‍💻</div>
+        <div class="team-name">Чень Вей</div>
+        <div class="team-role">Інженер ШІ</div>
+        <p class="team-bio">Запрограмував автономну систему управління куполами. Тримає базу живою, поки всі сплять.</p>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar">👩‍🌾</div>
+        <div class="team-name">Аніта Соуза</div>
+        <div class="team-role">Ботанік</div>
+        <p class="team-bio">Вирощує картоплю, томати та пшеницю у марсіанському ґрунті. «Де є їжа — є надія.»</p>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-avatar">🧑‍🔧</div>
+        <div class="team-name">Іван Петренко</div>
+        <div class="team-role">Механік</div>
+        <p class="team-bio">Підтримує в робочому стані всіх 7 роверів та систему терморегуляції куполів. Родом з України 🇺🇦</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: ГАЛЕРЕЯ -->
+  <section id="gallery">
+    <div class="section-header reveal">
+      <div class="section-tag">Галерея // Visual Log</div>
+      <h2 class="section-title">Марс <span class="highlight">Очима</span> Колоністів</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="gallery-masonry">
+      <div class="gallery-item reveal secret-trigger" id="gallery-secret">
+        <div class="gallery-img-placeholder g1">
+          <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;position:absolute;inset:0">
+            <defs>
+              <radialGradient id="sunRise" cx="50%" cy="70%" r="70%">
+                <stop offset="0%" stop-color="#e8611a" stop-opacity="0.8"/>
+                <stop offset="40%" stop-color="#8b2a08" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#050200" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <rect width="400" height="400" fill="#0a0300"/>
+            <circle cx="200" cy="310" r="80" fill="#e8611a" opacity="0.6"/>
+            <circle cx="200" cy="310" r="60" fill="#f5a050" opacity="0.4"/>
+            <ellipse cx="200" cy="310" rx="200" ry="100" fill="url(#sunRise)"/>
+            <rect x="0" y="290" width="400" height="110" fill="#1a0800"/>
+            <path d="M0,310 Q50,280 100,300 Q150,320 200,295 Q250,270 300,295 Q350,315 400,300 L400,400 L0,400 Z" fill="#0d0400"/>
+            <ellipse cx="80" cy="360" rx="30" ry="15" fill="#2a0f04"/>
+            <ellipse cx="320" cy="370" rx="40" ry="18" fill="#2a0f04"/>
+            <circle cx="50" cy="50" r="1.5" fill="white" opacity="0.8"/>
+            <circle cx="130" cy="30" r="1" fill="white" opacity="0.6"/>
+            <circle cx="280" cy="60" r="1.5" fill="white" opacity="0.7"/>
+            <circle cx="350" cy="40" r="1" fill="white" opacity="0.5"/>
+            <text x="200" y="180" text-anchor="middle" font-family="monospace" font-size="10" fill="rgba(200,130,60,0.5)" letter-spacing="3">СХІД СОНЦЯ НА МАРСІ</text>
+          </svg>
+        </div>
+        <div class="gallery-overlay"><div class="gallery-label">Схід Сонця з Арсія Монс</div></div>
+      </div>
+      <div class="gallery-item reveal">
+        <div class="gallery-img-placeholder g2">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;position:absolute;inset:0">
+            <rect width="200" height="200" fill="#0a0815"/>
+            <circle cx="100" cy="80" r="30" fill="none" stroke="rgba(130,80,200,0.3)" stroke-width="1"/>
+            <circle cx="100" cy="80" r="50" fill="none" stroke="rgba(130,80,200,0.15)" stroke-width="1"/>
+            <circle cx="70" cy="60" r="2" fill="#d4b0ff"/>
+            <circle cx="100" cy="50" r="3" fill="white"/>
+            <circle cx="130" cy="65" r="2" fill="#d4b0ff"/>
+            <circle cx="115" cy="90" r="2.5" fill="#a0c0ff"/>
+            <circle cx="85" cy="95" r="2" fill="#a0c0ff"/>
+            <circle cx="100" cy="80" r="4" fill="white" opacity="0.9"/>
+            <line x1="70" y1="60" x2="100" y2="50" stroke="rgba(200,180,255,0.3)" stroke-width="1"/>
+            <line x1="100" y1="50" x2="130" y2="65" stroke="rgba(200,180,255,0.3)" stroke-width="1"/>
+            <line x1="130" y1="65" x2="115" y2="90" stroke="rgba(200,180,255,0.3)" stroke-width="1"/>
+            <line x1="115" y1="90" x2="85" y2="95" stroke="rgba(200,180,255,0.3)" stroke-width="1"/>
+            <line x1="85" y1="95" x2="70" y2="60" stroke="rgba(200,180,255,0.3)" stroke-width="1"/>
+            <text x="100" y="170" text-anchor="middle" font-family="monospace" font-size="8" fill="rgba(180,150,255,0.5)" letter-spacing="2">НІЧНЕ НЕБО</text>
+          </svg>
+        </div>
+        <div class="gallery-overlay"><div class="gallery-label">Зоряне небо Марса</div></div>
+      </div>
+      <div class="gallery-item reveal">
+        <div class="gallery-img-placeholder g3">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;position:absolute;inset:0">
+            <rect width="200" height="200" fill="#060f15"/>
+            <path d="M20,180 Q20,60 100,60 Q180,60 180,180 Z" fill="rgba(74,158,186,0.08)" stroke="rgba(74,158,186,0.3)" stroke-width="1"/>
+            <rect x="70" y="140" width="8" height="30" fill="#2d5a1b"/>
+            <ellipse cx="74" cy="135" rx="15" ry="10" fill="#3d7a25"/>
+            <rect x="115" y="145" width="6" height="25" fill="#2d5a1b"/>
+            <ellipse cx="118" cy="140" rx="12" ry="8" fill="#4a9a30"/>
+            <rect x="45" y="150" width="5" height="20" fill="#2d5a1b"/>
+            <ellipse cx="47" cy="146" rx="10" ry="7" fill="#35701e"/>
+            <rect x="30" y="80" width="140" height="4" rx="2" fill="rgba(255,200,100,0.4)"/>
+            <rect x="50" y="90" width="100" height="2" rx="1" fill="rgba(255,200,100,0.2)"/>
+            <path d="M60,84 L45,160" stroke="rgba(255,220,150,0.05)" stroke-width="20"/>
+            <path d="M100,84 L100,160" stroke="rgba(255,220,150,0.05)" stroke-width="20"/>
+            <path d="M140,84 L155,160" stroke="rgba(255,220,150,0.05)" stroke-width="20"/>
+            <text x="100" y="195" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(100,200,100,0.5)" letter-spacing="2">ФЕРМА КУПОЛ-2</text>
+          </svg>
+        </div>
+        <div class="gallery-overlay"><div class="gallery-label">Гідропонна ферма</div></div>
+      </div>
+      <div class="gallery-item reveal">
+        <div class="gallery-img-placeholder g4">
+          <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;position:absolute;inset:0">
+            <rect width="400" height="200" fill="#080800"/>
+            <rect x="30" y="30" width="80" height="50" rx="3" fill="#0a1520" stroke="rgba(0,229,255,0.3)" stroke-width="1"/>
+            <rect x="35" y="35" width="70" height="20" rx="2" fill="rgba(0,100,200,0.2)"/>
+            <polyline points="37,65 47,58 57,62 67,50 77,55 87,48 97,52" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+            <rect x="125" y="30" width="80" height="50" rx="3" fill="#0a1520" stroke="rgba(0,229,255,0.3)" stroke-width="1"/>
+            <circle cx="165" cy="55" r="18" fill="none" stroke="rgba(232,97,26,0.5)" stroke-width="2"/>
+            <path d="M147,55 L183,55 M165,37 L165,73" stroke="rgba(232,97,26,0.3)" stroke-width="1"/>
+            <circle cx="165" cy="55" r="5" fill="#e8611a" opacity="0.7"/>
+            <rect x="220" y="30" width="80" height="50" rx="3" fill="#0a1520" stroke="rgba(0,229,255,0.3)" stroke-width="1"/>
+            <rect x="230" y="60" width="10" height="15" fill="rgba(57,255,20,0.4)"/>
+            <rect x="245" y="50" width="10" height="25" fill="rgba(57,255,20,0.5)"/>
+            <rect x="260" y="45" width="10" height="30" fill="rgba(57,255,20,0.6)"/>
+            <rect x="275" y="55" width="10" height="20" fill="rgba(57,255,20,0.4)"/>
+            <rect x="315" y="30" width="60" height="50" rx="3" fill="#0a1520" stroke="rgba(245,200,66,0.3)" stroke-width="1"/>
+            <text x="345" y="50" text-anchor="middle" font-family="monospace" font-size="12" fill="rgba(245,200,66,0.7)">O₂</text>
+            <text x="345" y="70" text-anchor="middle" font-family="monospace" font-size="8" fill="rgba(245,200,66,0.5)">21.0%</text>
+            <rect x="0" y="110" width="400" height="90" fill="#0d0d05"/>
+            <rect x="20" y="120" width="360" height="20" rx="3" fill="#1a1a08" stroke="rgba(200,180,50,0.2)" stroke-width="1"/>
+            <circle cx="50" cy="130" r="4" fill="rgba(57,255,20,0.5)"/>
+            <circle cx="70" cy="130" r="4" fill="rgba(232,97,26,0.5)"/>
+            <circle cx="90" cy="130" r="4" fill="rgba(0,229,255,0.5)"/>
+            <rect x="120" y="125" width="40" height="10" rx="2" fill="rgba(100,100,60,0.4)"/>
+            <rect x="170" y="125" width="40" height="10" rx="2" fill="rgba(100,100,60,0.4)"/>
+            <text x="200" y="165" text-anchor="middle" font-family="monospace" font-size="9" fill="rgba(200,180,50,0.4)" letter-spacing="2">ЦЕНТР УПРАВЛІННЯ</text>
+          </svg>
+        </div>
+        <div class="gallery-overlay"><div class="gallery-label">Центр управління базою</div></div>
+      </div>
+      <div class="gallery-item reveal">
+        <div class="gallery-img-placeholder g5">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;position:absolute;inset:0">
+            <rect width="200" height="200" fill="#06040f"/>
+            <circle cx="80" cy="70" r="22" fill="#4a3a2a"/>
+            <circle cx="73" cy="65" r="5" fill="rgba(0,0,0,0.3)" stroke="rgba(100,80,60,0.4)" stroke-width="0.5"/>
+            <circle cx="88" cy="75" r="3" fill="rgba(0,0,0,0.3)" stroke="rgba(100,80,60,0.4)" stroke-width="0.5"/>
+            <circle cx="78" cy="80" r="4" fill="rgba(0,0,0,0.25)" stroke="rgba(100,80,60,0.4)" stroke-width="0.5"/>
+            <text x="80" y="108" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(180,160,120,0.6)">ФОБОС</text>
+            <circle cx="150" cy="50" r="12" fill="#3a3020"/>
+            <circle cx="145" cy="46" r="3" fill="rgba(0,0,0,0.3)"/>
+            <circle cx="155" cy="56" r="2" fill="rgba(0,0,0,0.3)"/>
+            <text x="150" y="78" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(180,160,120,0.6)">ДЕЙМОС</text>
+            <path d="M0,150 Q50,130 100,145 Q150,160 200,140 L200,200 L0,200 Z" fill="#2a0f04"/>
+            <path d="M20,165 Q80,158 130,168 Q160,172 185,162" fill="none" stroke="rgba(180,100,50,0.4)" stroke-width="2" stroke-dasharray="4,3"/>
+            <text x="100" y="195" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,130,60,0.5)" letter-spacing="2">МІСЯЦІ МАРСА</text>
+          </svg>
+        </div>
+        <div class="gallery-overlay"><div class="gallery-label">Фобос і Деймос</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: ФАКТИ -->
+  <section id="facts">
+    <div class="section-header reveal">
+      <div class="section-tag">Факти // Mars Data</div>
+      <h2 class="section-title">Знай свою <span class="highlight">Планету</span></h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="facts-container">
+      <div class="fact-timeline">
+        <div class="fact-item reveal">
+          <div class="fact-dot"></div>
+          <div class="fact-icon">🌍</div>
+          <div class="fact-number">Факт 001</div>
+          <div class="fact-title">День і Ніч на Марсі</div>
+          <p class="fact-text">Марсіанська доба — «сол» — триває 24 години 37 хвилин. Це майже як земний день, що значно полегшує адаптацію екіпажу до нового ритму життя.</p>
+        </div>
+        <div class="fact-item reveal">
+          <div class="fact-dot"></div>
+          <div class="fact-icon">❄️</div>
+          <div class="fact-number">Факт 002</div>
+          <div class="fact-title">Вода підо льодом</div>
+          <p class="fact-text">Під марсіанською поверхнею виявлено значні запаси замерзлої води. Колонія Арес-1 видобуває до 500 літрів на добу завдяки геотермальному нагрівачу.</p>
+        </div>
+        <div class="fact-item reveal">
+          <div class="fact-dot"></div>
+          <div class="fact-icon">💨</div>
+          <div class="fact-number">Факт 003</div>
+          <div class="fact-title">Атмосфера з CO₂</div>
+          <p class="fact-text">95% марсіанської атмосфери — вуглекислий газ. Система MOXIE перетворює його на кисень для дихання колоністів, виробляючи 22 г O₂ на годину.</p>
+        </div>
+        <div class="fact-item reveal">
+          <div class="fact-dot"></div>
+          <div class="fact-icon">🏔️</div>
+          <div class="fact-number">Факт 004</div>
+          <div class="fact-title">Олімп Монс — найвища гора</div>
+          <p class="fact-text">Олімп Монс висотою 21 км — найвищий вулкан у Сонячній системі. З бази Арес-1 його можна побачити на горизонті ясними ранками.</p>
+        </div>
+        <div class="fact-item reveal secret-trigger" id="terminal-trigger" style="cursor:pointer;">
+          <div class="fact-dot"></div>
+          <div class="fact-icon">📡</div>
+          <div class="fact-number">Факт 005 // ДОСТУП ОБМЕЖЕНО</div>
+          <div class="fact-title">Секретний сигнал</div>
+          <p class="fact-text">Детектори зафіксували повторюваний радіосигнал із північного полюса Марса. Дані засекречені. <em style="color:var(--mars-orange)">Натисни для доступу до термінала...</em></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: АВТОР -->
+  <section id="author">
+    <div class="section-header reveal">
+      <div class="section-tag">Автор // Creator</div>
+      <h2 class="section-title">Хто <span class="highlight">Створив</span> Це?</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="author-wrapper">
+      <div class="author-portrait reveal">
+        <div class="author-avatar">
+          🧑‍💻
+          <div class="author-ring"><div class="author-ring-dot"></div></div>
+        </div>
+      </div>
+      <div class="author-info reveal">
+        <div class="author-name">Гроголь Ярослав</div>
+        <div class="author-title">Веб-розробник · Марс-ентузіаст</div>
+        <p class="author-bio">
+          Привіт! Цей проєкт — мій перший крок у веброзробку. Я захоплююся космосом,
+          наукою та технологіями. Марс — це мрія всього людства, і я хотів показати,
+          як може виглядати наше майбутнє на червоній планеті.
+          <br><br>
+          Сайт створено за допомогою чистого HTML та CSS, з елементами SVG-графіки
+          та прихованими секретами для допитливих мандрівників 🔍
+        </p>
+        <div class="author-links">
+          <span class="author-tag">HTML & CSS</span>
+          <span class="author-tag">SVG Art</span>
+          <span class="author-tag">2047 Mission</span>
+          <span class="author-tag secret-trigger" id="author-secret" style="cursor:pointer; border-color: rgba(245,200,66,0.2)">🔭 Secret</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">АРЕС<span>-1</span> // Колонія</div>
+    <div class="footer-coords">18.6°N, 133.1°W // Arsia Mons, Mars</div>
+    <div class="footer-copy">© 2047 Mars Colony Project</div>
+  </footer>
+
+</div><!-- /view-landing -->
+
+<!-- ========== HUD VIEW (Ares-7) ========== -->
+<div id="view-hud">
+
+  <!-- ЕКРАН ЗАВАНТАЖЕННЯ HUD -->
+  <div id="hud-loader">
+    <div style="text-align:center; width:320px; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:9990;">
+      <div style="width:120px;height:120px;margin:0 auto 24px;border-radius:50%;background:radial-gradient(circle at 35% 35%, #e8621a, #c1440e 50%, #6a1a06);box-shadow:0 0 60px rgba(232,98,26,0.5);animation:planetSpin 4s linear infinite;position:relative;">
+        <div style="position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(232,98,26,0.2);border-top-color:rgba(232,98,26,0.8);animation:ringOrbit 2s linear infinite;"></div>
+      </div>
+      <div style="font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:2px;color:var(--mars-dust);margin-bottom:20px;animation:blink 1s infinite;">ВСТАНОВЛЕННЯ ЗВ'ЯЗКУ З АРЕС-7...</div>
+      <div style="height:4px;background:rgba(232,98,26,0.2);border-radius:2px;overflow:hidden;margin-bottom:8px;">
+        <div id="hudLoaderFill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--mars-orange),#ffaa44);border-radius:2px;transition:width 0.1s;box-shadow:0 0 10px var(--mars-orange);"></div>
+      </div>
+      <div id="hudLoaderPct" style="font-family:'Orbitron',sans-serif;font-size:11px;color:var(--mars-dust);">0%</div>
+    </div>
+  </div>
+
+  <div id="hud-app" class="hidden">
+    <!-- HUD HEADER -->
+    <header class="hud-header">
+      <div class="hud-logo">⬡ ARES-7</div>
+      <div class="hud-stats">
+        <div class="hud-stat" id="statOxygen">
+          <span class="hud-stat-icon">🫁</span>
+          <span class="hud-stat-label">О₂</span>
+          <div class="hud-stat-bar"><div class="hud-stat-fill oxygen" id="oxygenBar"></div></div>
+          <span class="hud-stat-val" id="oxygenVal">87%</span>
+        </div>
+        <div class="hud-stat" id="statEnergy">
+          <span class="hud-stat-icon">⚡</span>
+          <span class="hud-stat-label">ЕНЕРГІЯ</span>
+          <div class="hud-stat-bar"><div class="hud-stat-fill energy" id="energyBar"></div></div>
+          <span class="hud-stat-val" id="energyVal">74%</span>
+        </div>
+        <div class="hud-stat" id="statFood">
+          <span class="hud-stat-icon">🌿</span>
+          <span class="hud-stat-label">ЇЖА</span>
+          <div class="hud-stat-bar"><div class="hud-stat-fill food" id="foodBar"></div></div>
+          <span class="hud-stat-val" id="foodVal">62%</span>
+        </div>
+        <div class="hud-stat" id="statCrew">
+          <span class="hud-stat-icon">👨‍🚀</span>
+          <span class="hud-stat-label">ЕКІПАЖ</span>
+          <span class="hud-stat-val" id="crewVal">6/6</span>
+        </div>
+      </div>
+      <div class="hud-time">
+        <div class="hud-mars-day" id="marsDay">МАРСІАНСЬКИЙ ДЕНЬ: 0847</div>
+        <div class="hud-earth-time" id="earthTime">--:--:--</div>
+      </div>
+    </header>
+
+    <!-- ALERT BAR -->
+    <div class="alert-bar" id="alertBar">
+      <span class="marquee" id="alertText">✅ СТАНДАРТНИЙ РЕЖИМ — ВСІ СИСТЕМИ В НОРМІ</span>
+    </div>
+
+    <!-- MAIN GRID -->
+    <main class="main-grid">
+      <!-- LEFT: MAP -->
+      <section class="hud-panel hud-panel-map">
+        <div class="hud-panel-title">🗺 КАРТА БАЗИ</div>
+        <div class="base-map" id="baseMap">
+          <div class="hud-module" id="mod-habitat" style="left:38%;top:30%" data-id="habitat">
+            <div class="hud-module-icon">🏠</div>
+            <div class="hud-module-name">ЖИТЛО</div>
+            <div class="hud-module-pulse"></div>
+          </div>
+          <div class="hud-module" id="mod-lab" style="left:62%;top:22%" data-id="lab">
+            <div class="hud-module-icon">🔬</div>
+            <div class="hud-module-name">ЛАБОР.</div>
+            <div class="hud-module-pulse"></div>
+          </div>
+          <div class="hud-module" id="mod-greenhouse" style="left:20%;top:50%" data-id="greenhouse">
+            <div class="hud-module-icon">🌱</div>
+            <div class="hud-module-name">ОРАНЖ.</div>
+            <div class="hud-module-pulse"></div>
+          </div>
+          <div class="hud-module" id="mod-reactor" style="left:72%;top:52%" data-id="reactor">
+            <div class="hud-module-icon">⚛️</div>
+            <div class="hud-module-name">РЕАКТОР</div>
+            <div class="hud-module-pulse"></div>
+          </div>
+          <div class="hud-module" id="mod-hangar" style="left:45%;top:62%" data-id="hangar">
+            <div class="hud-module-icon">🚀</div>
+            <div class="hud-module-name">АНГАР</div>
+            <div class="hud-module-pulse"></div>
+          </div>
+          <div class="hud-module" id="mod-comms" style="left:58%;top:72%" data-id="comms">
+            <div class="hud-module-icon">📡</div>
+            <div class="hud-module-name">ЗВ'ЯЗОК</div>
+            <div class="hud-module-pulse"></div>
+          </div>
+          <div class="hud-rover" id="rover">🤖</div>
+          <svg class="pipes" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <line x1="42" y1="35" x2="65" y2="27" class="pipe"/>
+            <line x1="42" y1="38" x2="24" y2="54" class="pipe"/>
+            <line x1="50" y1="44" x2="49" y2="62" class="pipe"/>
+            <line x1="66" y1="56" x2="55" y2="66" class="pipe"/>
+            <line x1="65" y1="30" x2="72" y2="52" class="pipe"/>
+          </svg>
+        </div>
+      </section>
+
+      <!-- CENTER -->
+      <section class="hud-panel hud-panel-center">
+        <div class="module-detail" id="moduleDetail">
+          <div class="detail-header">
+            <span class="detail-icon" id="detailIcon">⬡</span>
+            <span class="detail-name" id="detailName">ВИБЕРІТЬ МОДУЛЬ</span>
+          </div>
+          <div class="detail-body" id="detailBody">
+            <p class="hint-text">← Натисни на будь-який модуль бази, щоб переглянути його статус та керувати ресурсами.</p>
+          </div>
+        </div>
+        <div class="event-log">
+          <div class="hud-panel-title">📋 БОРТОВИЙ ЖУРНАЛ</div>
+          <div class="log-list" id="logList"></div>
+        </div>
+      </section>
+
+      <!-- RIGHT -->
+      <section class="hud-panel">
+        <div class="hud-panel-title">🎯 АКТИВНІ МІСІЇ</div>
+        <div class="missions" id="missionList"></div>
+
+        <div class="hud-panel-title" style="margin-top:16px">🛸 ШВИДКІ ДІЇ</div>
+        <div class="actions-grid">
+          <button class="action-btn" onclick="doAction('scan')">🔭<br>СКАН</button>
+          <button class="action-btn" onclick="doAction('repair')">🔧<br>РЕМОНТ</button>
+          <button class="action-btn" onclick="doAction('mine')">⛏<br>ВИДОБУТОК</button>
+          <button class="action-btn" onclick="doAction('launch')">🚀<br>ЗАПУСК</button>
+          <button class="action-btn" onclick="doAction('research')">🧬<br>НАУКА</button>
+          <button class="action-btn" onclick="doAction('sos')">🆘<br>SOS</button>
+        </div>
+
+        <div class="hud-panel-title">🌪 ПОГОДА НА МАРСІ</div>
+        <div class="weather-data" id="weatherData">
+          <div class="w-row"><span>Температура</span><span id="wTemp" class="w-val">-63°C</span></div>
+          <div class="w-row"><span>Вітер</span><span id="wWind" class="w-val">12 м/с</span></div>
+          <div class="w-row"><span>Пилова буря</span><span id="wStorm" class="w-val status-ok">ВІДСУТНЯ</span></div>
+          <div class="w-row"><span>Радіація</span><span id="wRad" class="w-val">142 мЗв</span></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="hud-footer">
+      <span>ARES-7 MARS BASE CONTROL SYSTEM v2.7.1</span>
+      <span>КООРДИНАТИ: 18.4°N 77.5°E | ОЛІМП МОНС</span>
+      <span>NASA × ESA × UKSA</span>
+    </footer>
+  </div><!-- /hud-app -->
+
+</div><!-- /view-hud -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
